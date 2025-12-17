@@ -1,51 +1,50 @@
-# PowerBI_dashboards
+This repository showcases end‑to‑end ownership of enterprise‑grade Power BI solutions, from data modelling and DAX engineering to UX design, navigation, and performance optimisation.
 
-**Routines Activation Dashboard:**
+**Data engineering and modelling**
+Built star‑schema models with conformed dimensions (e.g., central Date table, Customer, Branch, Country, Product, Contract) feeding multiple subject‑area reports (sales, operations, collections, service, invoicing).
 
-**Project overview**
-The Routines Activation Power BI solution monitors how consistently operational “routines” are being activated across the full customer lifecycle, including Sales, Field Services, 7‑Day Visits, Collections, Customer Care, and Customer Service.
-The report is designed for senior operations and commercial leaders who need a single view of activation rate, volume, and routine usage by country, customer type, and branch to drive performance management and process compliance.​
+Designed a central Date table with full time‑intelligence (calendar attributes, fiscal flags, current/previous period markers, rolling 7‑day and 12‑month logic) and disabled auto date/time to keep models lean and consistent.
 
-**Data sources and integration**
-This solution brings together data from three enterprise systems: a PostgreSQL operational database, SharePoint files (ad‑hoc and manually curated logs), and Snowflake for centralised, high‑volume datasets.​
-Using Power Query, the raw tables (Sales_data, Branches_info, IE_Branches_info, CUS01_CUSTOMER, Country, Customer_type, FS, Tickets, CC_agents, etc.) are cleaned, merged, and conformed to produce a consistent set of dimension and fact tables, including shared keys for customer, branch, and date to support cross‑department analysis.​
+Integrated data from PostgreSQL, SharePoint and Snowflake, using Power Query for type handling, conditional logic, merges, and surrogate key creation so that business tables from different systems join cleanly.
 
-**Data modelling and date intelligence**
-The model follows a star schema, with a single central Date table driving all departmental fact tables (Sales, Field Services routines, Collections, 7‑Day Visits, Tickets, Scheduled Services, etc.), which aligns with performance and best‑practice guidance for Power BI.​
-The Date dimension includes period attributes and time‑intelligence flags (week, month, quarter, year, current vs previous period), enabling consistent calculations of activation rates by date, 7‑day visit windows, and trend analysis across every page in the report.​
+Applied modelling best practices: only necessary columns loaded, numeric encoding of categories, separation of measures from columns, and clear folder structures for maintainability.
 
-**Business logic and DAX measures**
-Core KPIs are implemented as reusable DAX measures rather than duplicated columns, including: total interactions (sales, services, visits, or tickets), routines activated, and activation rate per department.​
-Activation rate is defined as routines activated ÷ eligible interactions, and all measures are fully filter‑aware so that changing country (UK vs Ireland), customer type (Residential vs Business), date range, or branch context dynamically recalculates the gauges, cards, and charts.​
+**DAX, metrics, and business logic**
+Authored reusable DAX measure layers for KPIs across domains: activation rate, ticket backlog, write‑off amount, recovery rate, margin %, contract status %, and portfolio‑level debt indicators.
 
-**Advanced navigation and UX design**
-The overview page provides a high‑level snapshot of activation performance for each department, with consistent gauges and KPI cards to make cross‑functional comparison easy for executives.
-Interactive icon‑based bookmarks allow users to toggle between UK and Ireland data via flag icons and to switch between Residential and Business customers via dedicated icons, creating an app‑like experience instead of cluttered slicers.​
+Implemented filter‑aware calculations so metrics respond correctly to country, segment, date, department, product, and salesperson context without report‑level hacks.
 
-Clicking on the Sales tile navigates to a dedicated Sales Overview page (and similarly structured pages for 7‑Day Visits, Field Services, and Customer Care), using bookmarks and buttons for seamless page navigation.​
-The Sales deep‑dive includes:
+Built Top‑N logic (e.g., Top 5 sellers, Top 5 resellers, top branches) combined with dynamic ranking tables for both regional and global views.
 
-KPI cards for Total Sales, Routines Activated, Activation Rate.
+Used field parameters to let users switch interactively between metrics (CA, margin, target attainment, etc.) and dimensions while reusing the same visuals, reducing complexity and improving performance.
 
-Routines by branch bar charts showing how many routines are activated per location.
+**Advanced UX, navigation, and storytelling**
+Designed multiple reports as app‑like experiences using bookmarks, buttons, and custom navigation bars (Overview/Details tabs, department tiles, icon‑based navigation).
 
-Sales by branch ranking to highlight high‑volume sites.
+Created bookmark‑driven drill experiences: from high‑level overviews into deep‑dive pages for Sales, Field Services, 7‑Day Visits, Customer Care, Contracts, and Collections, all preserving the user’s filter context.
 
-An Activation rate by Date time‑series visual for short‑term trend monitoring.
+Implemented pop‑out filter panels and icon‑based segment selectors (e.g., UK vs Ireland, Residential vs Business) to keep the canvas clean while still offering powerful slicing.
 
-A detailed “Sales by routine flag” table listing installations, routine names, dates, and activation flags to support root‑cause analysis and coaching at record level.
+Used consistent visual templates and layout patterns (KPI cards, gauges, trend lines, “Excel‑like” matrices, small multiples) so executives can scan and compare performance across functions in seconds.
 
-Performance optimisation choices
-The report is built with performance in mind, following enterprise optimisation practices:
+**Performance optimisation and governance**
+Optimised reports by minimising visual count per page, removing unused columns, and preferring measures over calculated columns to reduce model size.
 
-Lean star schema with only required columns and rows retained, and text fields reduced where possible to improve VertiPaq compression and query speed.​
+Pushed heavy transformations to Power Query and source systems, keeping the semantic model focussed on calculations rather than ETL.
 
-Preference for Power Query transformations (merges, derived columns, type conversions) instead of calculated columns, to push heavy work to the data refresh step and preserve report responsiveness.​
+Used import mode with incremental refresh and aggregations (where applicable) to balance freshness and query speed on operational and finance datasets.
 
-Use of import mode for core fact tables with appropriate aggregations rather than excessive DirectQuery, balancing freshness and speed; Row‑level filters and incremental refresh can be applied where necessary as data volume grows.​
+Followed a clear naming convention for tables, measures, and display folders, making the models production‑ready and easy for other analysts to extend.
 
-Controlled visual density on each page (limited number of visuals and interactions) so that executives get a fast, focused experience without overloading the report canvas.​
+**Business domains covered**
+Across the projects in this repository, these techniques are applied to real business scenarios:
 
-**Business impact and transferable skills**
-This project demonstrates the ability to translate a complex operational process (multi‑department routine activation) into a clear analytical model with consistent KPIs, driven from disparate sources (PostgreSQL, SharePoint, Snowflake).​
-It highlights advanced Power BI capabilities: enterprise‑grade data modelling, central date table and time intelligence, DAX measure design, bookmark‑based navigation, and performance tuning—all directly applicable to sales, service, and operations reporting in real‑world organisations.
+Service routines activation across Sales, Field Services, Collections, Customer Care, Customer Service, and 7‑Day Visits.
+
+Finance collections for non‑active B2C debtors, including aging, write‑off candidates (>6 months), and recovery rates by unpaid invoices.
+
+Contracts and invoicing pipelines from installation to invoiced/solved status with ticket‑backlog monitoring.
+
+Global sales performance with KPI L12M, regional and global rankings, category mix, and top‑seller/top‑reseller analysis.
+
+Together, these dashboards demonstrate the ability to take messy, multi‑source operational data, engineer robust semantic models, encode complex business logic in DAX, and deliver fast, intuitive, executive‑ready Power BI experiences.
